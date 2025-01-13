@@ -1,4 +1,8 @@
-on: [push, workflow_dispatch]
+on: 
+  push:
+    tags:
+      - '/d./d./d'
+  workflow_dispatch:
 
 
 permissions:
