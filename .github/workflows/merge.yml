@@ -1,0 +1,60 @@
+on:
+    pull_request:
+        branches:
+            - main
+
+permissions:
+    id-token: write # Require write permission to Fetch an OIDC token (required for federated credential) and write it, it will be automatically used on actions / cli that need it
+
+
+env: 
+  AZURE_RG_NAME: ${{ vars.PROJECT_NAME }}-rg-${{ vars.AZURE_RESOURCE_IDENTIFIER }}
+
+jobs:
+  frontend:
+    
+    runs-on: ubuntu-latest
+    steps:
+      # Étape 1: Vérifiez le code (checkout)
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Étape 2: Configurez Node.js (version indiquée dans le package.json)
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16' # Remplacez par la version appropriée
+
+    # Étape 3: Installer les dépendances
+    - name: Install dependencies
+      run: npm install
+
+    # Étape 4: Construire l'application React
+    - name: Build React App
+      run: npm run build
+
+    # Étape 5: Lancer le script de linting
+    - name: Run linting
+      run: npm run lint
+
+  backend:
+    name: Backend Pipeline
+    runs-on: ubuntu-latest
+    steps:
+    # Étape 1: Vérifiez le code (checkout)
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Étape 2: Installer .NET SDK
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0' # Remplacez par la version utilisée
+
+    # Étape 3: Restaurer les dépendances
+    - name: Restore dependencies
+      run: dotnet restore
+
+    # Étape 4: Construire en mode Release
+    - name: Build in Release mode
+      run: dotnet build --configuration Release
