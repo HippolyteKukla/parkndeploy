@@ -1,7 +1,7 @@
 on: 
   push:
     tags:
-      - '/d./d./d' #structure du tag
+      - '\d.\d.\d' #structure du tag
   workflow_dispatch:
 
 
